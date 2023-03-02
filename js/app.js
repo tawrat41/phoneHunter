@@ -39,9 +39,9 @@
             <img src="${phone.image}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">${phone.phone_name}</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the
-                    bulk of
-                    the card's content.</p>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <div onclick=loadPhoneDetails('${phone.slug}') id="btn-show-details" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Show Details</div>
+                
             </div>
         </div>
         `
@@ -64,6 +64,13 @@
     processSearch(10);
  })
 
+//  for enter key
+ document.getElementById('search-field').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        processSearch(10);
+    }
+});
+
  const toggleSpinner = isLoading => {
     const loaderSection = document.getElementById('loader');
     if(isLoading){
@@ -78,4 +85,22 @@
     processSearch();
  })
 
- loadPhones();
+const loadPhoneDetails = async id => {
+    const url = ` https://openapi.programming-hero.com/api/phone/${id}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    displayPhoneDetails(data.data);
+}
+
+const displayPhoneDetails = phone =>{
+    console.log(phone);
+    const modalTitle = document.getElementById('staticBackdropLabel');
+    modalTitle.innerText = phone.name;
+    const phoneDetails = document.getElementById('phone-details');
+    phoneDetails.innerHTML = `
+    <p>${phone.releaseDate ? phone.releaseDate : 'No release date found.'}</p>
+    `
+}
+
+ 
+ loadPhones('apple');
